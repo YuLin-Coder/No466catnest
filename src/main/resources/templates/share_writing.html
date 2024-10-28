@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(5)"></div>
+
+<section class="container container-page">
+
+    <div th:replace="module/macros :: push(2)"></div>
+
+    <div class="tile">
+        <input type="hidden" id="articleId">
+        <a th:href="@{/share/interceptor/writeShareStatus(status=0)}"><span th:style="${status==0} ? 'color:#5bc0de':'color:silver'">已发布</span></a>&nbsp;|&nbsp;&nbsp;
+        <a th:href="@{/share/interceptor/writeShareStatus(status=1)}"><span th:style="${status==1} ? 'color:#5bc0de':'color:silver'">发布分享</span></a>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" id="article_table">
+                <tr>
+                    <td th:switch="${status}">
+                        <th:block th:case="0">
+                            <div class="tile">
+                                <header class="article-header">
+                                    <h1 class="article-title">已发分享</h1>
+                                </header>
+                                <input type="hidden" id="shareId">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <tr>
+                                            <td>分享标题</td>
+                                            <td>发布时间</td>
+                                            <td>浏览次数</td>
+                                            <td>操作</td>
+                                        </tr>
+                                        <tr th:each="share : ${info.list}">
+
+                                            <td th:text="${share.shareTitle}" class="mt-auto"></td>
+                                            <td th:text="${#dates.format(share.shareCreatetime,'yyyy/MM/dd HH:mm:ss')}"></td>
+                                            <td th:text="${share.shareCount}"></td>
+                                            <td>
+                                                <a th:href="@{/share/interceptor/updateShare(shareId=${share.shareId})}" class="btn-success button btn-sm ">编辑</a>
+                                                <a th:href="@{/details(id=${share.shareId},status='分享')}" class="btn-success button btn-sm">查看</a>
+                                                <button th:onclick="'javascript:remove('+${share.shareId}+')'" class="btn-danger button btn-sm">删除(不可逆)</button>
+                                            </td>
+                                        </tr>
+                                        <tr th:unless="${info.list.total} != 0">
+                                            <td th:attr="colspan='4',align='center'">暂无分享</td>
+                                        </tr>
+                                    </table>
+                                    <div th:replace="module/macros :: pagePost(${info})"></div>
+                                </div>
+                            </div>
+                        </th:block>
+
+                        <th:block th:case="1">
+                            <div class="content">
+                                <header class="article-header">
+                                    <h1 class="article-title">发布分享</h1>
+                                </header>
+                                <ul class="plinks ptags">
+                                    <form id="dataFrom" autocomplete="off">
+                                        <div class="form-group">
+                                            <label class="col-form-label" for="shareTitle"><span>*标题</span></label>
+                                            <input class="form-control" th:value="${share!=null ? share.shareTitle:''}" id="shareTitle" name="shareTitle" type="text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-form-label" for="shareUrl"><span>*图片</span></label>
+                                            <input type="text" class="form-control" th:value="${share!=null ? share.shareUrl:''}" id="shareUrl" name="shareUrl" readonly="readonly">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default " type="button" th:onclick="'javascript:openChoice(\''+shareUrl+'\')'">选择</button>
+                                            </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-form-label"><span>*分享内容</span>
+                                                <span data-toggle="tooltip" data-placement="top" style="cursor: pointer">
+                                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                                </span></label>
+                                            <textarea class="form-control" th:text="${share!=null ? share.shareContent:''}" rows="3" name="shareContent" style="resize: none"></textarea>
+                                        </div>
+                                        <div class="tile-footer">
+                                            <div th:unless="${share==null}">
+                                                <input th:value="${share!=null ? share.shareId:''}" id="shareId" name="shareId" type="hidden">
+                                                <button class="btn btn-sm btn-outline-primary" type="button" onclick="update()"><span>修改</span></button>
+                                            </div>
+                                            <div th:unless="${share!=null}">
+                                                <button class="btn btn-sm btn-outline-primary" type="button" onclick="save()"><span>保存</span></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </ul>
+                            </div>
+                        </th:block>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div style="height: 200px;"></div>
+
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+<script>
+
+    function save() {
+        var obj = $('#dataFrom').serialize();
+        $.ajax({
+            type : "POST",
+            url : "/share/interceptor/writeShare",
+            data : obj,
+            dataType : "json",
+            success : function(data) {
+                if (data.flag == true) {
+                    $.toast({
+                        text : data.msg,
+                        heading : '提示',
+                        icon : 'success',
+                        showHideTransition : 'fade',
+                        allowToastClose : true,
+                        hideAfter : 1000,
+                        stack : 1,
+                        position : 'top-center',
+                        textAlign : 'left',
+                        loader : true,
+                        loaderBg : '#ffffff',
+                        afterHidden : function() {
+                            window.location.href='/share/interceptor/writeShareStatus?status=0';
+                        }
+                    });
+                } else {
+                    showMsg(data.msg, "error", 3000);
+                }
+            }
+        });
+    }
+    function remove(shareId) {
+        var r=confirm("确定删除吗!");
+        if (r==true){
+            window.location.href = "/share/interceptor/deleteShare?shareId="+shareId;
+        }
+        else{
+        }
+    }
+    function openChoice(id) {
+        layer.open({
+            type : 2,
+            title : '所有图片',
+            anim : 2,
+            area : [ '90%', '90%' ],
+            shadeClose : true,
+            maxmin : true,
+            content : "/enclosure/openChoice/" + id
+        });
+    }
+    function update() {
+        var obj = $('#dataFrom').serialize();
+        $.ajax({
+            type : "POST",
+            url : "/share/interceptor/updateShare",
+            data : obj,
+            dataType : "json",
+            success : function(data) {
+                if (data.flag == true) {
+                    $.toast({
+                        text : data.msg,
+                        heading : '提示',
+                        icon : 'success',
+                        showHideTransition : 'fade',
+                        allowToastClose : true,
+                        hideAfter : 1000,
+                        stack : 1,
+                        position : 'top-center',
+                        textAlign : 'left',
+                        loader : true,
+                        loaderBg : '#ffffff',
+                        afterHidden : function() {
+                            window.location.href='/share/interceptor/writeShareStatus?status=0';
+                        }
+                    });
+                } else {
+                    showMsg(data.msg, "error", 3000);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

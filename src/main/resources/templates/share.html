@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+<body class="user-select">
+
+<div th:replace="module/macros :: header(2)"></div>
+
+<section class="container">
+    <div class="content-wrap">
+        <div class="content">
+            <div class="title">
+                <h3>分享</h3>
+            </div>
+
+            <article th:each="share : ${info.list}" class="excerpt excerpt-1">
+                <a class="focus" th:href="@{/details(id=${share.shareId},status='分享')}" title="">
+                    <img class="thumb"  th:src="${share.shareUrl}" alt="">
+                </a>
+                <header>
+                    <span class="cat" href="program">分享</span>
+                    <h2><a th:text="${share.shareTitle}" th:href="@{/details(id=${share.shareId},status='分享')}" title=""></a></h2>
+                </header>
+                <p class="meta">
+                    <time class="time" th:text="${#dates.format(share.shareCreatetime,'yyyy/MM/dd HH:mm:ss')}"><i class="glyphicon glyphicon-time"></i> </time>
+                    <span class="views"><i class="glyphicon glyphicon-eye-open"></i> 共<span th:text="${share.shareCount}"></span>人围观</span>
+
+                <p class="note"  th:text="${share.shareContent}"> </p>
+            </article>
+
+
+
+        </div>
+        <div th:style="${search ==null ? 'display:none':''}">
+            <div th:replace="module/macros :: pageIndexSearch(${info},${search})"></div>
+        </div>
+        <div th:style="${search !=null ? 'display:none':''}">
+            <div th:replace="module/macros :: pageIndex(${info})"></div>
+        </div>
+    </div>
+    <aside class="sidebar">
+
+        <div th:replace="module/macros :: sidebarforshare"></div>
+
+        <div th:replace="module/macros :: hot_articlefroshare"></div>
+
+    </aside>
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+
+<div th:replace="module/macros :: footer_js"></div>
+
+</body>
+</html>

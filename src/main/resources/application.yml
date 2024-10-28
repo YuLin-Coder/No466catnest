@@ -1,0 +1,47 @@
+server:
+  port: 8089
+#  ssl:
+#    key-store: classpath:4927256_www.tyttkx.com.pfx
+#    key-store-password: yOec4BvN
+#    keyStoreType: PKCS12
+
+logging:
+  level:
+    org.springframework: info
+    data: DEBUG
+    security: DEBUG
+  config: classpath:logback-spring.xml
+  file:
+    name: log/blog-dev.log
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true #使数据库表也pojo字段对应
+
+spring:
+  messages: #国际化配置
+    basename: I18n.messages
+    encoding: UTF-8
+  mvc:
+    static-path-pattern: /**
+  thymeleaf:
+    servlet:
+      content-type: text/html
+    encoding: UTF-8
+    cache: false
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/catnest?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.qq.com #QQ邮箱,用其他的也是一样
+    username: 2848351894@qq.com #qq邮箱地址
+    password: hgibplyhxydldeie #注意这个不是密码，是客户端授权码
+    default-encoding: utf-8 #字符集
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(5)"></div>
+
+<section class="container container-page">
+
+    <div th:replace="admin/admin_module/admin_macros :: push(5)"></div>
+
+    <div class="tile">
+        <input type="hidden" id="articleId">
+        <a thref="#"><span style="color:#5bc0de">公告</span></a>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" id="article_table">
+                <tr>
+                    <td>
+                        <div class="tile">
+                            <header class="article-header">
+                                <h1 class="article-title">公告</h1>
+                            </header>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <tr>
+                                        <td>发布时间</td>
+                                        <td>发布内容</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    <tr th:each="notice : ${info.list}">
+                                        <td th:text="${#dates.format(notice.noticeCreatetime,'yyyy/MM/dd HH:mm:ss')}"></td>
+                                        <td th:text="${notice.noticeContent}" class="mt-auto"></td>
+                                        <td>
+                                            <button th:onclick="'javascript:remove('+${notice.noticeId}+')'" class="btn-danger button btn-sm">删除</button>
+                                        </td>
+                                    </tr>
+                                    <tr th:unless="${info.list.total} != 0">
+                                        <td th:attr="colspan='4',align='center'">暂无公告</td>
+                                    </tr>
+                                </table>
+                                <div th:replace="module/macros :: pagePost(${info})"></div>
+                                <form id="dataFrom" autocomplete="off">
+                                    <div class="form-group">
+                                        <label class="col-form-label"><span>*公告</span>
+                                            <span data-toggle="tooltip" data-placement="top" style="cursor: pointer">
+                                          <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                            </span></label>
+                                        <textarea class="form-control" rows="3" name="noticeContent" style="resize: none"></textarea>
+                                    </div>
+                                    <div class="tile-footer">
+                                        <button class="btn btn-sm btn-outline-primary" type="button" onclick="save()"><span>添加</span></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+
+
+
+
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+
+<script>
+
+
+    function remove(noticeId) {
+        var r=confirm("确定删除吗!");
+        if (r==true){
+            window.location.href = "/admin/notice/deleteNotice?noticeId="+noticeId;
+        }
+    }
+
+    function save() {
+        var obj = $('#dataFrom').serialize();
+        $.ajax({
+            type : "POST",
+            url : "/admin/notice/addNotice",
+            data : obj,
+            dataType : "json",
+            success : function(data) {
+                if (data.flag == true) {
+                    $.toast({
+                        text : data.msg,
+                        heading : '提示',
+                        icon : 'success',
+                        showHideTransition : 'fade',
+                        allowToastClose : true,
+                        hideAfter : 1000,
+                        stack : 1,
+                        position : 'top-center',
+                        textAlign : 'left',
+                        loader : true,
+                        loaderBg : '#ffffff',
+                        afterHidden : function() {
+                            window.location.href='/admin/notice';
+                        }
+                    });
+                } else {
+                    showMsg(data.msg, "error", 3000);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

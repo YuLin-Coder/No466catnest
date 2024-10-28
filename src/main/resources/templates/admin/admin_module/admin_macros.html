@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="push(state)">
+    <div class="pageside">
+        <div class="pagemenus">
+            <ul class="pagemenu">
+                <li><a href="/admin/" th:style="${state==1} ? 'color:#5bc0de':''">首页</a></li>
+                <li><a href="/admin/user/" th:style="${state==2} ? 'color:#5bc0de':''">用户管理</a></li>
+                <li><a href="/admin/sponsor/" th:style="${state==3} ? 'color:#5bc0de':''">赞助管理</a></li>
+                <li><a href="/admin/report" th:style="${state==4} ? 'color:#5bc0de':''">举报管理</a></li>
+                <li><a href="/admin/notice" th:style="${state==5} ? 'color:#5bc0de':''">公告管理</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

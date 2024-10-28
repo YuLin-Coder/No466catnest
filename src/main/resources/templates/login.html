@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>登录</title>
+	<link rel="stylesheet" th:href="@{/login_css/normalize.css}">
+	<link rel="stylesheet" th:href="@{/login_css/login.css}">
+	<link rel="stylesheet" th:href="@{/login_css/sign-up-login.css}">
+	<link rel="stylesheet" th:href="@{/login_css/inputEffect.css}" />
+	<link rel="stylesheet" th:href="@{/login_css/tooltips.css}" />
+	<link rel="stylesheet" th:href="@{/login_css/spop.min.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+	<script type="text/javascript" th:src="@{/js/jquery-2.1.4.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/snow.js}"></script>
+	<script type="text/javascript" th:src="@{/js/jquery.pure.tooltips.js}"></script>
+	<script type="text/javascript" th:src="@{/js/spop.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+	<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+	<script>
+		function goto_register(){
+			$("#register-username").val("");
+			$("#register-password").val("");
+			$("#register-repassword").val("");
+			$("#register-code").val("");
+			$("#tab-2").prop("checked",true);
+		}
+		function goto_login(){
+			$("#login-username").val("");
+			$("#login-password").val("");
+			$("#tab-1").prop("checked",true);
+		}
+		function goto_forget(){
+			$("#forget-username").val("");
+			$("#forget-password").val("");
+			$("#forget-code").val("");
+			$("#tab-3").prop("checked",true);
+		}
+
+		function getCode(){//获取验证码
+			var userPhone = $("#userPhone1").val();
+			if(userPhone !=''){
+					$.ajax({
+						type: "post",
+						url: "/login/getCode",
+						dataType :"json",
+						async: false,
+						data: {userPhone:userPhone},
+						success:function (data) {
+							if(data.flag==true){
+								$.toast({
+									text: data.msg,
+									heading: '提示',
+									icon: 'success',
+									showHideTransition: 'fade',
+									allowToastClose: true,
+									hideAfter: 1000,
+									stack: 1,
+									position: 'top-center',
+									textAlign: 'left',
+									loader: true,
+									loaderBg: '#ffffff'
+								});
+							}else{
+								loadingBack("btn_login","登录");
+								showMsg(data.msg,"error",3000);
+							}
+						},error:function (data) {
+							loadingBack("btn_login","登录");
+							showMsg("发送失败","error",3000);
+						}
+					});
+			}else {
+				showMsg("请输入电话号码！", "error", "3000");
+			}
+		}
+
+
+		function login(){//登录
+			var username = $("#login-username").val();
+			var password = $("#login-password").val();
+			var code=$("#login_code").val();
+			if(password !=''){
+				if(username !=''){
+					if(code !=codeValue){
+						showMsg("验证码错误！", "error", "3000");
+					}else {
+						loadingText("btn_login","登录中...");
+						$.ajax({
+							type: "post",
+							url: "/login/getLogin",
+							dataType :"json",
+							async: false,
+							data: {phone:username,password:password},
+							success:function (data) {
+								if(data.flag==true){
+									$.toast({
+										text: data.msg,
+										heading: '提示',
+										icon: 'success',
+										showHideTransition: 'fade',
+										allowToastClose: true,
+										hideAfter: 1000,
+										stack: 1,
+										position: 'top-center',
+										textAlign: 'left',
+										loader: true,
+										loaderBg: '#ffffff',
+										afterHidden: function () {
+											window.location.href = '/reBack';
+										}
+									});
+								}else{
+									loadingBack("btn_login","登录");
+									showMsg(data.msg,"error",3000);
+								}
+							},error:function (data) {
+								loadingBack("btn_login","登录");
+								showMsg("登录失败","error",3000);
+							}
+						});
+					}
+
+				}else {
+					showMsg("请输入用户名！", "error", "3000");
+				}
+			}else {
+				showMsg("请输入密码！", "error", "3000");
+			}
+
+		}
+
+
+		//注册
+		function register(){
+			var userNickname=$("#userNickname").val();
+			var userQq=$("#userQq").val();
+			var userWechat=$("#userWechat").val();
+			var userPhone=$("#userPhone1").val();
+			var userPassword=$("#userPassword1").val();
+			var userCode=$("#userCode1").val();
+			if(userCode!==''){
+				if(userNickname!==''){
+					if(userQq!==''){
+						if(userWechat!==''){
+							if(userPhone!==''){
+								if(userPassword!==''){
+									loadingText("btn_login","提交中...");
+									$.ajax({
+										type: "post",
+										url: "/login/register",
+										dataType :"json",
+										async: false,
+										data: {userCode:userCode,userNickname:userNickname,userQq:userQq,userWechat:userWechat,userPhone:userPhone,userPassword:userPassword},
+										success:function (data) {
+											if(data.flag==true){
+												$.toast({
+													text: data.msg,
+													heading: '提示',
+													icon: 'success',
+													showHideTransition: 'fade',
+													allowToastClose: true,
+													hideAfter: 1000,
+													stack: 1,
+													position: 'top-center',
+													textAlign: 'left',
+													loader: true,
+													loaderBg: '#ffffff',
+													afterHidden: function () {
+														window.location.href = "/login";
+													}
+												});
+											}else{
+												loadingBack("btn_login","注册");
+												showMsg(data.msg,"error",3000);
+											}
+										},error:function (data) {
+											loadingBack("btn_login","注册");
+											showMsg("注册失败","error",3000);
+										}
+									});
+								}else {
+									showMsg("请输入密码！", "error", "3000");
+								}
+							}else {
+								showMsg("请输入电话号码！", "error", "3000");
+							}
+						}else {
+							showMsg("请输入微信！", "error", "3000");
+						}
+					}else {
+						showMsg("请输入QQ！", "error", "3000");
+					}
+				}else {
+					showMsg("请输入昵称！", "error", "3000");
+				}
+			}else {
+				showMsg("请输入验证码！", "error", "3000");
+			}
+		}
+
+		//重置密码
+		function forget(){
+			var userPone = $("#userPhone").val();
+			var	userCode = $("#userCode").val();
+			var	userPassword = $("#userPassword2").val();
+			if(userPone !=''){
+				if(userCode !=''){
+					if(userPassword !=''){
+						loadingText("btn_login","操作中...");
+						$.ajax({
+							type: "post",
+							url: "/login/updatePassword",
+							dataType :"json",
+							async: false,
+							data: {userPone:userPone,userCode:userCode,userPassword:userPassword},
+							success:function (data) {
+								if(data.flag==true){
+									$.toast({
+										text: data.msg,
+										heading: '提示',
+										icon: 'success',
+										showHideTransition: 'fade',
+										allowToastClose: true,
+										hideAfter: 1000,
+										stack: 1,
+										position: 'top-center',
+										textAlign: 'left',
+										loader: true,
+										loaderBg: '#ffffff',
+										afterHidden: function () {
+											window.location.href = "/login";
+										}
+									});
+								}else{
+									loadingBack("btn_login","忘记密码");
+									showMsg(data.msg,"error",3000);
+								}
+							},error:function (data) {
+								loadingBack("btn_login","忘记密码");
+								showMsg("操作失败","error",3000);
+							}
+						});
+					} else {
+						showMsg("请输入电话号码！","error",3000);
+					}
+				}else {
+					showMsg("请输入验证码！","error",3000);
+				}
+			} else {
+				showMsg("请输入新密码！","error",3000);
+			}
+		}
+
+	</script>
+	<style type="text/css">
+		html{width: 100%; height: 100%;}
+		body{
+			background-repeat: no-repeat;
+			background-position: center center #2D0F0F;
+			background-color: #00BDDC;
+			background-size: 100% 100%;
+		}
+		.snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100001; }
+	</style>
+</head>
+<body style="background-image:url(../static/images/snow.jpg);background-repeat: no-repeat;background-size: cover">
+<!-- 雪花背景 -->
+<div class="snow-container"></div>
+
+<!-- 登录控件 -->
+<div id="login">
+	<input id="tab-1" type="radio" name="tab" class="sign-in hidden" checked />
+	<input id="tab-2" type="radio" name="tab" class="sign-up hidden" />
+	<input id="tab-3" type="radio" name="tab" class="sign-out hidden" />
+	<div class="wrapper">
+		<!-- 登录页面 -->
+		<div class="login sign-in-htm">
+			<form class="container offset1 loginform">
+				<!-- 猫头鹰控件 -->
+				<div id="owl-login" class="login-owl">
+					<div class="hand"></div>
+					<div class="hand hand-r"></div>
+					<div class="arms">
+						<div class="arm"></div>
+						<div class="arm arm-r"></div>
+					</div>
+				</div>
+				<div class="pad input-container">
+					<section class="content">
+							<span class="input input--hideo" id="login-username-style">
+								<input class="input__field input__field--hideo" type="text" id="login-username"
+									   autocomplete="off" placeholder="请输入电话号码" tabindex="1" maxlength="15" />
+								<label class="input__label input__label--hideo" for="login-username">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo" id="login-password-style">
+								<input class="input__field input__field--hideo" type="password" id="login-password" placeholder="请输入密码" tabindex="2" maxlength="25"/>
+								<label class="input__label input__label--hideo" for="login-password">
+									<i class="fa fa-fw fa-lock icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo" id="login-password-style">
+								<input class="input__field input__field--hideo" type="text" id="login_code" placeholder="验证码" tabindex="2" maxlength="15"/>
+								<label class="input__label input__label--hideo" for="login_code">
+									<i class="fa fa-fw fa-lock icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<div class="input input--hideo" id="login-password-style">
+								<div id="code_box"></div>
+							</div>
+					</section>
+				</div>
+				<div class="form-actions">
+					<a tabindex="4" class="btn pull-left btn-link text-muted" onclick="goto_forget()">忘记密码?</a>
+					<a tabindex="5" class="btn btn-link text-muted" onclick="goto_register()">注册</a>
+					<input class="btn btn-primary" id="btn_login" type="button" tabindex="3" onclick="login()" value="登录"
+						   style="color:white;"/>
+				</div>
+			</form>
+		</div>
+
+
+		<!-- 忘记密码页面 -->
+		<div class="login sign-out-htm">
+			<form action="#" method="post" class="container offset1 loginform">
+				<!-- 猫头鹰控件 -->
+				<div id="owl-login" class="forget-owl">
+					<div class="hand"></div>
+					<div class="hand hand-r"></div>
+					<div class="arms">
+						<div class="arm"></div>
+						<div class="arm arm-r"></div>
+					</div>
+				</div>
+				<div class="pad input-container">
+					<section class="content">
+							<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userPhone" autocomplete="off" placeholder="请输入电话号码"/>
+								<label class="input__label input__label--hideo" for="userPhone">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="password" id="userPassword2" placeholder="请输入新密码" />
+								<label class="input__label input__label--hideo" for="userPassword2">
+									<i class="fa fa-fw fa-lock icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userCode" autocomplete="off" placeholder="请输入验证码"/>
+								<label class="input__label input__label--hideo" for="userCode">
+									<i class="fa fa-fw fa-wifi icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+                         <a tabindex="5" class="btn btn-link text-muted" onclick="getCode()">发送验证码</a>
+							</span>
+					</section>
+				</div>
+				<div class="form-actions">
+					<a class="btn pull-left btn-link text-muted" onclick="goto_login()">返回登录</a>
+					<input class="btn btn-primary" type="button" onclick="forget()" value="重置密码"
+						   style="color:white;"/>
+				</div>
+			</form>
+		</div>
+		<!-- 注册页面 -->
+		<div class="login sign-up-htm">
+			<form action="#" method="post" class="container offset1 loginform" id="notebookFrom">
+				<!-- 猫头鹰控件 -->
+
+				<div id="owl-login" class="register-owl">
+					<div class="hand"></div>
+					<div class="hand hand-r"></div>
+					<div class="arms">
+						<div class="arm"></div>
+						<div class="arm arm-r"></div>
+					</div>
+				</div>
+				<div class="pad input-container">
+					<section class="content">
+							<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userNickname" autocomplete="off" placeholder="请输入昵称"/>
+								<label class="input__label input__label--hideo" for="userNickname">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userQq" autocomplete="off" placeholder="请输入qq"/>
+								<label class="input__label input__label--hideo" for="userQq">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userWechat" autocomplete="off" placeholder="请输入微信"/>
+								<label class="input__label input__label--hideo" for="userWechat">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="password" id="userPassword1" autocomplete="off" placeholder="请输入密码"/>
+								<label class="input__label input__label--hideo" for="userPassword1">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userPhone1" autocomplete="off" placeholder="请输入电话号码"/>
+								<label class="input__label input__label--hideo" for="userPhone1">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+								</label>
+							</span>
+						<span class="input input--hideo">
+								<input class="input__field input__field--hideo" type="text" id="userCode1" autocomplete="off" placeholder="请输入验证码"/>
+								<label class="input__label input__label--hideo" for="userCode1">
+									<i class="fa fa-fw fa-user icon icon--hideo"></i>
+									<span class="input__label-content input__label-content--hideo"></span>
+
+								</label>
+							</span>
+						<span class="input input--hideo">
+                         <a tabindex="5" class="btn btn-link text-muted" onclick="getCode()">发送验证码</a>
+							</span>
+
+					</section>
+				</div>
+				<div class="form-actions">
+					<a class="btn pull-left btn-link text-muted" onclick="goto_login()">返回登录</a>
+					<input class="btn btn-primary" type="button" onclick="register()" value="注册"
+						   style="color:white;"/>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	function changeStoreLocation(value){
+		$("#userGender1").val(value);
+	}
+	var code_box = document.getElementById("code_box");
+	var codeValue='';
+	window.onload = function refreshCode() {
+		//62个字符 随机选择4位
+		var code = 'QWERTYUIOPASDFGHJKLZXCVBNM',
+				char = '',
+				result = '';
+		for (var i = 0; i < 4; i++) {
+			//随机选择一位  （0,61） 写出0到61的随机的索引数字
+			var code_index = Math.round(Math.random()*25);
+			//得到随机的索引  取出随机地字符
+			var char = code[code_index];
+			//随机取出的字符 存在几个相同重复的问题 ，而且对于字母，不能区分大小写。
+			// 避免重复的思路是：取出字符之后,和最后的result对比一下，看看里边是不是已经存在了，如果存在本次循环就终止，进行下一次
+			if (result.toUpperCase().indexOf(char.toUpperCase()) > -1)
+					//indexOf() == -1 说明结果里边没有要找的字符 那么 > -1 就是 里边有重复的字符
+			{
+				i --;
+				//为什么会 --？ 因为如果条件成立，那么本轮循环就结束进行下一轮循环（自然i就加1了），那么本轮本应该取出的字符就没有了
+				//到最后会少一个字符 缺席
+				continue;//终止本轮循环 进行下一轮
+			}
+			result += char;
+		}
+		codeValue=result;
+		code_box.innerHTML = result;
+	}
+	function refreshCode() {
+		//62个字符 随机选择4位
+		var code = 'QWERTYUIOPASDFGHJKLZXCVBNM',
+				char = '',
+				result = '';
+		for (var i = 0; i < 4; i++) {
+			//随机选择一位  （0,61） 写出0到61的随机的索引数字
+			var code_index = Math.round(Math.random()*25);
+			//得到随机的索引  取出随机地字符
+			var char = code[code_index];
+			//随机取出的字符 存在几个相同重复的问题 ，而且对于字母，不能区分大小写。
+			// 避免重复的思路是：取出字符之后,和最后的result对比一下，看看里边是不是已经存在了，如果存在本次循环就终止，进行下一次
+			if (result.toUpperCase().indexOf(char.toUpperCase()) > -1)
+					//indexOf() == -1 说明结果里边没有要找的字符 那么 > -1 就是 里边有重复的字符
+			{
+				i --;
+				//为什么会 --？ 因为如果条件成立，那么本轮循环就结束进行下一轮循环（自然i就加1了），那么本轮本应该取出的字符就没有了
+				//到最后会少一个字符 缺席
+				continue;//终止本轮循环 进行下一轮
+			}
+			result += char;
+		}
+		codeValue=result;
+		code_box.innerHTML = result;
+	}
+	//点击事件
+	code_box.onclick = refreshCode;
+</script>
+</body>
+</html>

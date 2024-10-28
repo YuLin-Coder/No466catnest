@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(5)"></div>
+
+<section class="container container-page">
+
+    <div th:replace="admin/admin_module/admin_macros :: push(3)"></div>
+
+    <div class="tile">
+        <input type="hidden" id="articleId">
+        <a thref="#"><span style="color:#5bc0de">赞助</span></a>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" id="article_table">
+                <tr>
+                    <td>
+                        <div class="tile">
+                            <header class="article-header">
+                                <h1 class="article-title">赞助审核</h1>
+                            </header>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <tr>
+                                        <td>标题*</td>
+                                        <td th:text="${sponsor.getSponsorTitle()}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>图片*</td></td>
+                                        <td>
+                                            <img th:src="${sponsor.getSponsorPicture()}" height="150px" width="250px">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>内容*</td>
+                                        <td>
+                                            <textarea th:text="${sponsor.getSponsorTitle()}"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>原因*</td>
+                                        <td th:text="${sponsor.getSponsorReason()}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>时间*</td>
+                                        <td th:text="${#dates.format(sponsor.sponsorCreatetime,'yyyy/MM/dd HH:mm:ss')}"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <button th:onclick="'javascript:adopt('+${sponsor.sponsorId}+')'" class="btn-success button btn-sm ">通过</button>
+                                            <button th:onclick="'javascript:remove('+${sponsor.sponsorId}+')'" class="btn-danger button btn-sm">打回</button>
+                                            <button onclick="back()" class="btn-success button btn-sm ">返回</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+
+<script>
+
+
+    function remove(sponsorId) {
+        var r=confirm("确定打回吗!");
+        if (r==true){
+            window.location.href = "/admin/sponsor/repulse?sponsorId="+sponsorId;
+        }
+    }
+    function adopt(sponsorId) {
+        var r=confirm("确定通过吗!");
+        if (r==true){
+            window.location.href = "/admin/sponsor/adopt?sponsorId="+sponsorId;
+        }
+    }
+    function back() {
+       window.location.href = "/admin/sponsor/";
+    }
+
+</script>
+</body>
+</html>

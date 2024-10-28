@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="push(state)">
+    <div class="pageside">
+        <div class="pagemenus">
+            <ul class="pagemenu">
+                <li><a th:href="@{/revelation/interceptor/writeRevelation}" th:style="${state==1} ? 'color:#5bc0de':''">启示</a></li>
+                <li><a th:href="@{/share/interceptor/writeShare}" th:style="${state==2} ? 'color:#5bc0de':''">分享</a></li>
+                <li><a th:href="@{/sponsor/interceptor/writeSponsor}" th:style="${state==3} ? 'color:#5bc0de':''">赞助</a></li>
+                <li><a th:href="@{/person/interceptor}" th:style="${state==4} ? 'color:#5bc0de':''">个人</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="footer">
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2021 <a href="">tyttkx.com</a> &nbsp; <a href="#" target="_blank" rel="nofollow">一切伟大的行动和思想，都有一个微不足道的开始</a> &nbsp; &nbsp; <a href="http://www.mycodes.net/" target="_blank">i创小队</a></p>
+        </div>
+        <div id="gotop"><a class="gotop"></a></div>
+    </footer>
+
+</div>
+
+<div th:fragment="sidebar">
+    <div class="fixed">
+        <div class="widget widget_search">
+            <form class="navbar-form" action="/indexSearch" method="post">
+                <div class="input-group">
+                    <input type="text" name="search" id="search" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                    <span class="input-group-btn">
+            <button class="btn btn-default btn-search" type="submit">搜索</button>
+            </span> </div>
+            </form>
+        </div>
+        <div class="widget widget_sentence">
+            <h3>每日一句</h3>
+            <div class="widget-sentence-content">
+                <h4 th:text="${sentence.getSentenceDate}"></h4>
+                <p><span th:text="${sentence.getSentenceE}"></span><br />
+                    <span th:text="${sentence.getSentenceC}"></span>。（<span th:text="${sentence.getSentenceZ}"></span>）</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="sidebarforsponsor">
+    <div class="fixed">
+        <div class="widget widget_search">
+            <form class="navbar-form" action="/sponsor/Search" method="post">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                    <span class="input-group-btn">
+            <button class="btn btn-default btn-search" type="submit">搜索</button>
+            </span> </div>
+            </form>
+        </div>
+        <div class="widget widget_sentence">
+            <h3>每日一句</h3>
+            <div class="widget-sentence-content">
+                <h4 th:text="${sentence.getSentenceDate}"></h4>
+                <p><span th:text="${sentence.getSentenceE}"></span><br />
+                    <span th:text="${sentence.getSentenceC}"></span>。（<span th:text="${sentence.getSentenceZ}"></span>）</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="sidebarforpost">
+    <div class="fixed">
+        <div class="widget widget_search">
+            <form class="navbar-form" action="/revelation/search" method="post">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                    <span class="input-group-btn">
+            <button class="btn btn-default btn-search" type="submit">搜索</button>
+            </span> </div>
+            </form>
+        </div>
+        <div class="widget widget_sentence">
+            <h3>每日一句</h3>
+            <div class="widget-sentence-content">
+                <h4 th:text="${sentence.getSentenceDate}"></h4>
+                <p><span th:text="${sentence.getSentenceE}"></span><br />
+                    <span th:text="${sentence.getSentenceC}"></span>。（<span th:text="${sentence.getSentenceZ}"></span>）</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="sidebarforshare">
+    <div class="fixed">
+        <div class="widget widget_search">
+            <form class="navbar-form" action="/share/search" method="post">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                    <span class="input-group-btn">
+            <button class="btn btn-default btn-search" type="submit">搜索</button>
+            </span> </div>
+            </form>
+        </div>
+        <div class="widget widget_sentence">
+            <h3>每日一句</h3>
+            <div class="widget-sentence-content">
+                <h4 th:text="${sentence.getSentenceDate}"></h4>
+                <p><span th:text="${sentence.getSentenceE}"></span><br />
+                    <span th:text="${sentence.getSentenceC}"></span>。（<span th:text="${sentence.getSentenceZ}"></span>）</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="hot_article">
+    <div class="widget widget_hot">
+        <h3>热门文章</h3>
+        <ul th:each="hot : ${indexMax}">
+            <li>
+                <a th:href="@{/details(id=${hot.indexId},status=${hot.indexFrom})}">
+                <span class="thumbnail">
+                    <img class="thumb" th:data-original="${hot.indexUrl}" th:src="${hot.indexUrl}" alt="">
+                </span>
+                <span class="text" th:text="${hot.indexTitle}"></span>
+                <span class="muted"><i class="glyphicon glyphicon-time"></i><span th:text="${#dates.format(hot.indexCreateTime,'yyyy/MM/dd')}"></span></span>
+                <span class="muted"><i class="glyphicon glyphicon-eye-open"></i> <span th:text="${hot.indexCount}"></span></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--sponsor 页面的热门文章-->
+<div th:fragment="hot_articlefrosponsor">
+    <div class="widget widget_hot">
+        <h3>热门文章</h3>
+        <ul th:each="hot : ${indexMax}">
+            <li><a th:href="@{/details(id=${hot.sponsorId},status='赞助')}">
+                <span class="thumbnail">
+                    <img class="thumb" th:data-original="${hot.sponsorPicture}" th:src="${hot.sponsorPicture}" alt="">
+                </span>
+                <span class="text" th:text="${hot.sponsorTitle}"></span>
+                <span class="muted"><i class="glyphicon glyphicon-time"></i><span th:text="${#dates.format(hot.sponsorCreatetime,'yyyy/MM/dd')}"></span></span>
+                <span class="muted"><i class="glyphicon glyphicon-eye-open"></i> <span th:text="${hot.sponsorCount}"></span></span></a></li>
+        </ul>
+    </div>
+</div>
+
+<!--share 页面的热门文章-->
+<div th:fragment="hot_articlefroshare">
+    <div class="widget widget_hot">
+        <h3>热门文章</h3>
+        <ul th:each="hot : ${indexMax}">
+            <li><a th:href="@{/details(id=${hot.shareId},status='分享')}">
+                <span class="thumbnail">
+                    <img class="thumb" th:data-original="${hot.shareUrl}" th:src="${hot.shareUrl}" alt="">
+                </span>
+                <span class="text" th:text="${hot.shareTitle}"></span>
+                <span class="muted"><i class="glyphicon glyphicon-time"></i><span th:text="${#dates.format(hot.shareCreatetime,'yyyy/MM/dd')}"></span></span>
+                <span class="muted"><i class="glyphicon glyphicon-eye-open"></i> <span th:text="${hot.shareCount}"></span></span></a></li>
+        </ul>
+    </div>
+</div>
+
+<!--post 页面的热门文章-->
+<div th:fragment="hot_postfroshare">
+    <div class="widget widget_hot">
+        <h3>热门文章</h3>
+        <ul th:each="hot : ${indexMax}">
+            <li><a th:href="@{/details(id=${hot.postId},status='启示')}">
+                <span class="thumbnail">
+                    <img class="thumb" th:data-original="${hot.postUrl}" th:src="${hot.postUrl}" alt="">
+                </span>
+                <span class="text" th:text="${hot.postTitle}"></span>
+                <span class="muted"><i class="glyphicon glyphicon-time"></i><span th:text="${#dates.format(hot.postCreatetime,'yyyy/MM/dd')}"></span></span>
+                <span class="muted"><i class="glyphicon glyphicon-eye-open"></i> <span th:text="${hot.postCount}"></span></span></a></li>
+        </ul>
+    </div>
+</div>
+
+<head th:fragment="head">
+     <meta charset="utf-8">
+     <meta name="renderer" content="webkit">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>catHouse</title>
+     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+     <link rel="stylesheet" type="text/css" th:href="@{/css/nprogress.css}">
+     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+     <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+     <link rel="apple-touch-icon-precomposed" th:href="@{/images/icon/icon.png}">
+
+     <link rel="shortcut icon" th:href="@{/static/images/icon/cat.ico}">
+
+</head>
+
+<div th:fragment="footer_js">
+    <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+    <script th:src="@{/js/nprogress.js}"></script>
+    <script th:src="@{/js/jquery.lazyload.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery.ias.js}"></script>
+    <script th:src="@{/js/scripts.js}"></script>
+</div>
+
+<div th:fragment="photo_js">
+    <script type="text/javascript" th:src="@{/plugins/vali/js/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/vali/js/popper.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/vali/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/vali/js/main.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/vali/js/plugins/pace.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+    <script th:src="@{/plugins/layer/layer.js}"></script>
+</div>
+
+<div th:fragment="photo_css">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/vali/css/main.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/font-awesome-4.7.0/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+    <link rel="stylesheet" th:href="@{/plugins/simplemde/simplemde.min.css}">
+<!--    <link rel="stylesheet" th:href="@{//cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css}">-->
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-fileinput/css/fileinput.min.css}">
+<!--    <link rel="stylesheet" th:href="@{/css/attachment.css}">-->
+</div>
+
+<div th:fragment="bootstrapFileinput">
+    <script type="text/javascript" th:src="@{/plugins/bootstrap-fileinput/js/fileinput.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/bootstrap-fileinput/js/locales/zh.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/bootstrap-fileinput/themes/fa/theme.js}"></script>
+</div>
+
+<header th:fragment="header(status)">
+    <nav class="navbar navbar-default" id="navbar">
+        <div class="container">
+            <div class="header-topbar hidden-xs link-border">
+                <ul class="site-nav topmenu">
+                    <li>
+                        <a th:href="@{/revelation/interceptor/writeRevelation}" th:style="${status==5} ? 'color:#5bc0de':''">发布</a>
+                    </li>
+                    <li th:style="${session.user_session!=null ? '':'display: none'}">
+                        <a th:href="@{/person/interceptor}" th:style="${status==7} ? 'color:#5bc0de':''">设置</a>
+                    </li>
+                    <li th:style="${session.administrators!=null ? '':'display: none'}">
+                        <a th:href="@{/admin}" th:style="${status==6} ? 'color:#5bc0de':''">管理</a>
+                    </li>
+                    <li th:style="${session.user_session!=null ? '':'display: none'}">
+                        <a th:href="@{/out}" th:style="${status==8} ? 'color:#5bc0de':''">退出</a>
+                    </li>
+                </ul>
+                <div th:style="${session.user_session!=null ? '':'display: none'}">
+                    <a href="#" th:text="${session.user_session!=null ? session.user_session.getUserNickname()+',欢迎您！':''}"></a>
+                </div>
+                <div th:style="${session.user_session!=null ? 'display: none':''}">
+                    <a th:href="@{/login1(userUrl='/')}">Hi,请登录</a>
+                </div>
+            </div>
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-navbar" aria-expanded="false"> <span class="sr-only"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+                <h1 class="logo hvr-bounce-in"><a href="" title=""><img th:src="@{/images/cathouse.jpg}" alt=""></a></h1>
+            </div>
+            <div class="collapse navbar-collapse" id="header-navbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li th:class="${status==0} ? 'hidden-index active':''"><a data-cont="首页" th:href="@{/}">首页</a></li>
+                    <li th:class="${status==1} ? 'hidden-index active':''"><a th:href="@{/revelation}">启示</a></li>
+                    <li th:class="${status==2} ? 'hidden-index active':''"><a th:href="@{/share}">分享</a></li>
+                    <li th:class="${status==3} ? 'hidden-index active':''"><a th:href="@{/sponsor}">赞助</a></li>
+<!--                    <li th:class="${status==4} ? 'hidden-index active':''"><a href="../style/category.html">关于我们</a></li>-->
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div th:fragment="pageEnclosure(pageInfo)">
+    <ul class=" no-margin float-right">
+        <li th:if="${pageInfo.pages}!=0" class="page-item"><a class="page-link" href="#" th:text="'共'+ ${pageInfo.pages}+'页'"></a></li>
+        <li th:if="${pageInfo.hasPreviousPage}" class="page-item"><a
+                th:href="@{'?page='+${pageInfo.prePage}}" class="page-link"> <i
+                class="fa fa-angle-left"></i>&nbsp;<span th:text="#{messages.uppage}">上一页</span>
+        </a></li>
+        <th:block th:each="nav : ${pageInfo.navigatepageNums}">
+            <li
+                    th:class="${nav==pageInfo.pageNum} ? 'page-item active':'page-item'"><a
+                    class="page-link" th:href="@{'?page='+${nav}}" th:text="${nav}"></a>
+            </li>
+
+        </th:block>
+        <th:block th:if="${pageInfo.hasNextPage}">
+            <li class="page-item"><a
+                    th:href="@{'?page='+${pageInfo.nextPage}}" class="page-link">
+                <span th:text="#{messages.nextpage}">下一页</span>
+                <i class="fa fa-angle-right"></i>
+            </a></li>
+        </th:block>
+    </ul>
+</div>
+
+<div th:fragment="pagePost(pageInfo)">
+    <table>
+        <tr>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.pages}!=0"><a href="#" th:text="'共'+ ${pageInfo.pages}+'页'"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;"  th:if="${pageInfo.hasPreviousPage}"><a th:href="@{'?page='+${pageInfo.prePage}}">上一页</a></th>
+            <th width="15px" th:each="nav : ${pageInfo.navigatepageNums}"><a th:href="@{'?page='+${nav}}" th:text="${nav}" th:style="${nav==pageInfo.pageNum} ? 'color:red':''"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.hasNextPage}"><a th:href="@{'?page='+${pageInfo.nextPage}}">下一页</a></th>
+        </tr>
+    </table>
+</div>
+
+<div th:fragment="pageIndex(pageInfo)">
+    <table>
+        <tr>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.pages}!=0"><a href="#" th:text="'共'+ ${pageInfo.pages}+'页'"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;"  th:if="${pageInfo.hasPreviousPage}"><a th:href="@{'?page='+${pageInfo.prePage}}">上一页</a></th>
+            <th width="15px" th:each="nav : ${pageInfo.navigatepageNums}"><a th:href="@{'?page='+${nav}}" th:text="${nav}" th:style="${nav==pageInfo.pageNum} ? 'color:red':''"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.hasNextPage}"><a th:href="@{'?page='+${pageInfo.nextPage}}">下一页</a></th>
+        </tr>
+    </table>
+</div>
+
+<div th:fragment="pageIndexSearch(pageInfo,search)">
+    <table>
+        <tr>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.pages}!=0"><a href="#" th:text="'共'+ ${pageInfo.pages}+'页'"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;"  th:if="${pageInfo.hasPreviousPage}"><a th:href="@{'?page='+${pageInfo.prePage}+'&search='+${search}}">上一页</a></th>
+            <th width="15px" th:each="nav : ${pageInfo.navigatepageNums}"><a th:href="@{'?page='+${nav}+'&search='+${search}}" th:text="${nav}" th:style="${nav==pageInfo.pageNum} ? 'color:red':''"></a></th>
+            <th width="50px" bgcolor="white" style="color:green;" th:if="${pageInfo.hasNextPage}"><a th:href="@{'?page='+${pageInfo.nextPage}+'&search='+${search}}">下一页</a></th>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

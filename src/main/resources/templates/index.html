@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<div th:replace="module/macros :: header(0)"></div>
+
+<section class="container">
+  <div class="content-wrap">
+    <div class="content">
+      <div id="focusslide" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#focusslide" data-slide-to="0" class="active"></li>
+          <li data-target="#focusslide" data-slide-to="1"></li>
+          <li data-target="#focusslide" data-slide-to="2"></li>
+        </ol>
+
+        <div class="carousel-inner" role="listbox">
+          <div class="item active"> <a href="" target="_blank"><img th:src="@{/images/banner/banner_01.jpg}" alt="" class="img-responsive"></a>
+            <!--<div class="carousel-caption"> </div>-->
+          </div>
+          <div class="item"> <a href="" target="_blank"><img th:src="@{/images/banner/banner_02.jpg}" alt="" class="img-responsive"></a>
+            <!--<div class="carousel-caption"> </div>-->
+          </div>
+          <div class="item"> <a href="" target="_blank"><img th:src="@{/images/banner/banner_03.jpg}" alt="" class="img-responsive"></a>
+            <!--<div class="carousel-caption"> </div>-->
+          </div>
+        </div>
+
+        <a class="left carousel-control" href="#focusslide" role="button" data-slide="prev" rel="nofollow"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">上一个</span> </a> <a class="right carousel-control" href="#focusslide" role="button" data-slide="next" rel="nofollow"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">下一个</span> </a> </div>
+
+      <div class="title">
+        <h3>最新发布</h3>
+        <div class="more">
+          <a href="/revelation/">post</a>
+          <a href="/share/">share</a>
+          <a href="/sponsor/">sponsor</a>
+        </div>
+      </div>
+      <ul th:each="information : ${info.list}">
+        <li>
+          <article class="excerpt excerpt-8">
+            <a class="focus" th:href="@{/details(id=${information.indexId},status=${information.indexFrom})}">
+              <img class="thumb" th:data-original="${information.indexUrl}" th:src="${information.indexUrl}" alt="">
+            </a>
+            <header>
+              <a class="cat" href="#" th:text="${information.indexFrom}"><i></i></a>
+              <h2><a th:href="@{/details(id=${information.indexId},status=${information.indexFrom})}" th:text="${information.indexTitle}"></a></h2>
+            </header>
+            <p class="meta">
+              <time class="time"><i class="glyphicon glyphicon-time"></i><span th:text="${#dates.format(information.indexCreateTime,'yyyy/MM/dd HH:mm:ss')}"></span></time>
+              <span class="views"><i class="glyphicon glyphicon-eye-open"></i> 共<span th:text="${information.indexCount}"></span>人围观</span>
+            </p>
+            <p class="note" th:text="${information.indexContent}">... </p>
+          </article>
+        </li>
+      </ul>
+      <br>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="fixed">
+      <div class="widget widget-tabs">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab">公告</a></li>
+          <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">联系站长</a></li>
+        </ul>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane notice active" id="notice">
+            <ul th:each="notice : ${notices}">
+              <li>
+                <time th:text="${#dates.format(notice.noticeCreatetime,'yyyy/MM/dd')}"></time>
+                <a href="" target="_blank" th:text="${notice.noticeContent}"></a>
+              </li>
+            </ul>
+          </div>
+          <div role="tabpanel" class="tab-pane contact" id="contact">
+            <h2>Email:<br />
+              <a href="https://mail.qq.com" data-toggle="tooltip" data-placement="bottom" title="2848351894@qq.com">2848351894@qq.com</a></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="module/macros :: sidebar"></div>
+    <div th:replace="module/macros :: hot_article"></div>
+  </aside>
+
+</section>
+
+
+
+<div th:replace="module/macros :: footer"></div>
+<div th:replace="module/macros :: footer_js"></div>
+</body>
+</html>

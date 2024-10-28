@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(6)"></div>
+
+<section class="container container-page">
+
+    <div th:replace="admin/admin_module/admin_macros :: push(1)"></div>
+
+    <div class="tile">
+
+        <div class="content">
+            <header class="article-header">
+                <h1 class="article-title">catHouse</h1>
+            </header>
+            <div class="readers">
+                <div th:each="list : ${lists}">
+                    <a class="item-readers item-readers-1" target="_blank" href="" rel="nofollow">
+                        <h4>
+                            [<span th:text="${list.adminIndexContent}"></span>]
+                            <small>数量：
+                                <span th:text="${list.adminIndexId}">
+                                </span>
+                            </small>
+                        </h4>
+                        <img class="avatar" height="36" width="36" th:src="${list.getAdminUrl()}" alt="">
+                        <strong>更新时间</strong><span th:text="${#dates.format(list.adminNearTime,'yyyy/MM/dd HH:mm:ss')}"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+<script>
+
+    function save() {
+        var obj = $('#dataFrom').serialize();
+        $.ajax({
+            type : "POST",
+            url : "/revelation/writePost",
+            data : obj,
+            dataType : "json",
+            success : function(data) {
+                if (data.flag == true) {
+                    $.toast({
+                        text : data.msg,
+                        heading : '提示',
+                        icon : 'success',
+                        showHideTransition : 'fade',
+                        allowToastClose : true,
+                        hideAfter : 1000,
+                        stack : 1,
+                        position : 'top-center',
+                        textAlign : 'left',
+                        loader : true,
+                        loaderBg : '#ffffff',
+                        afterHidden : function() {
+                            window.location.href='/revelation/writeRevelationStatus?status=0';
+                        }
+                    });
+                } else {
+                    showMsg(data.msg, "error", 3000);
+                }
+            }
+        });
+    }
+    function remove(postId) {
+        var r=confirm("确定删除吗!");
+        if (r==true){
+            window.location.href = "/revelation/deletePost?postId="+postId;
+        }
+        else{
+        }
+    }
+    function openChoice(id) {
+        layer.open({
+            type : 2,
+            title : '所有图片',
+            anim : 2,
+            area : [ '90%', '90%' ],
+            shadeClose : true,
+            maxmin : true,
+            content : "/enclosure/openChoice/" + id
+        });
+    }
+    function update() {
+        var obj = $('#dataFrom').serialize();
+        $.ajax({
+            type : "POST",
+            url : "/revelation/updatePost",
+            data : obj,
+            dataType : "json",
+            success : function(data) {
+                if (data.flag == true) {
+                    $.toast({
+                        text : data.msg,
+                        heading : '提示',
+                        icon : 'success',
+                        showHideTransition : 'fade',
+                        allowToastClose : true,
+                        hideAfter : 1000,
+                        stack : 1,
+                        position : 'top-center',
+                        textAlign : 'left',
+                        loader : true,
+                        loaderBg : '#ffffff',
+                        afterHidden : function() {
+                            window.location.href='/revelation/writeRevelationStatus?status=0';
+                        }
+                    });
+                } else {
+                    showMsg(data.msg, "error", 3000);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

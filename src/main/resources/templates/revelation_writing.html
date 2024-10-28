@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(5)"></div>
+
+<section class="container container-page">
+
+  <div th:replace="module/macros :: push(1)"></div>
+
+  <div class="tile">
+    <input type="hidden" id="articleId">
+    <a th:href="@{/revelation/interceptor/writeRevelationStatus(status=0)}"><span th:style="${status==0} ? 'color:#5bc0de':'color:silver'">已发布</span></a>&nbsp;|&nbsp;&nbsp;
+    <a th:href="@{/revelation/interceptor/writeRevelationStatus(status=1)}"><span th:style="${status==1} ? 'color:#5bc0de':'color:silver'">发布启示</span></a>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="article_table">
+        <tr>
+          <td th:switch="${status}">
+            <th:block th:case="0">
+              <div class="tile">
+                    <header class="article-header">
+                      <h1 class="article-title">已发启示</h1>
+                    </header>
+                <input type="hidden" id="postId">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-bordered table-hover">
+                        <tr>
+                          <td>启示标题</td>
+                          <td>发布时间</td>
+                          <td>浏览次数</td>
+                          <td>操作</td>
+                        </tr>
+                        <tr th:each="post : ${info.list}">
+
+                          <td th:text="${post.postTitle}" class="mt-auto"></td>
+                          <td th:text="${#dates.format(post.postCreatetime,'yyyy/MM/dd HH:mm:ss')}"></td>
+                          <td th:text="${post.postCount}"></td>
+                          <td>
+                            <a th:href="@{/revelation/interceptor/updatePost(postId=${post.postId})}" class="btn-success button btn-sm ">编辑</a>
+                            <a th:href="@{/details(id=${post.postId},status='启示')}" class="btn-success button btn-sm">查看</a>
+                            <button th:onclick="'javascript:remove('+${post.postId}+')'" class="btn-danger button btn-sm">删除(不可逆)</button>
+                          </td>
+                        </tr>
+                        <tr th:unless="${info.list.total} != 0">
+                          <td th:attr="colspan='4',align='center'">暂无启示</td>
+                        </tr>
+                      </table>
+                      <div th:replace="module/macros :: pagePost(${info})"></div>
+                    </div>
+                  </div>
+            </th:block>
+
+            <th:block th:case="1">
+              <div class="content">
+                <header class="article-header">
+                  <h1 class="article-title">发布启示</h1>
+                </header>
+                <ul class="plinks ptags">
+                  <form id="dataFrom" autocomplete="off">
+                    <div class="form-group">
+                      <label class="col-form-label" for="postTitle"><span>*标题</span></label>
+                      <input class="form-control" th:value="${post!=null ? post.postTitle:''}" id="postTitle" name="postTitle" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label" for="postUrl"><span>*图片</span></label>
+                      <input type="text" class="form-control" th:value="${post!=null ? post.postUrl:''}" id="postUrl" name="postUrl" readonly="readonly">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default " type="button" th:onclick="'javascript:openChoice(\''+postUrl+'\')'">选择</button>
+                      </span>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label"><span>*内容</span>
+                        <span data-toggle="tooltip" data-placement="top" style="cursor: pointer">
+                          <i class="fa fa-question-circle" aria-hidden="true"></i>
+                        </span></label>
+                      <textarea class="form-control" th:text="${post!=null ? post.postContent:''}" rows="3" name="postContent" style="resize: none"></textarea>
+                    </div>
+                    <div class="tile-footer">
+                        <div th:unless="${post==null}">
+                          <input th:value="${post!=null ? post.postId:''}" id="postId" name="postId" type="hidden">
+                          <button class="btn btn-sm btn-outline-primary" type="button" onclick="update()"><span>修改</span></button>
+                        </div>
+                        <div th:unless="${post!=null}">
+                          <button class="btn btn-sm btn-outline-primary" type="button" onclick="save()"><span>保存</span></button>
+                        </div>
+                    </div>
+                  </form>
+                </ul>
+              </div>
+            </th:block>
+
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div style="height: 200px;"></div>
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+
+<script>
+
+  function save() {
+    var obj = $('#dataFrom').serialize();
+    $.ajax({
+      type : "POST",
+      url : "/revelation/interceptor/writePost",
+      data : obj,
+      dataType : "json",
+      success : function(data) {
+        if (data.flag == true) {
+          $.toast({
+            text : data.msg,
+            heading : '提示',
+            icon : 'success',
+            showHideTransition : 'fade',
+            allowToastClose : true,
+            hideAfter : 1000,
+            stack : 1,
+            position : 'top-center',
+            textAlign : 'left',
+            loader : true,
+            loaderBg : '#ffffff',
+            afterHidden : function() {
+              window.location.href='/revelation/interceptor/writeRevelationStatus?status=0';
+            }
+          });
+        } else {
+          showMsg(data.msg, "error", 3000);
+        }
+      }
+    });
+  }
+
+  function remove(postId) {
+      var r=confirm("确定删除吗!");
+      if (r==true){
+        window.location.href = "/revelation/interceptor/deletePost?postId="+postId;
+      }
+      else{
+      }
+  }
+  function openChoice(id) {
+    layer.open({
+      type : 2,
+      title : '所有图片',
+      anim : 2,
+      area : [ '90%', '90%' ],
+      shadeClose : true,
+      maxmin : true,
+      content : "/enclosure/openChoice/" + id
+    });
+  }
+  function update() {
+    var obj = $('#dataFrom').serialize();
+    $.ajax({
+      type : "POST",
+      url : "/revelation/interceptor/updatePost",
+      data : obj,
+      dataType : "json",
+      success : function(data) {
+        if (data.flag == true) {
+          $.toast({
+            text : data.msg,
+            heading : '提示',
+            icon : 'success',
+            showHideTransition : 'fade',
+            allowToastClose : true,
+            hideAfter : 1000,
+            stack : 1,
+            position : 'top-center',
+            textAlign : 'left',
+            loader : true,
+            loaderBg : '#ffffff',
+            afterHidden : function() {
+              window.location.href='/revelation/interceptor/writeRevelationStatus?status=0';
+            }
+          });
+        } else {
+          showMsg(data.msg, "error", 3000);
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(7)"></div>
+
+<section class="container container-page">
+
+  <div th:replace="module/macros :: push(4)"></div>
+
+  <div class="tile">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="article_table">
+        <tr>
+              <div class="content">
+                <header class="article-header">
+                  <h1 class="article-title">个人信息</h1>
+                </header>
+                <ul class="plinks ptags">
+                  <form id="dataFrom" autocomplete="off">
+                    <div class="form-group">
+                      <label class="col-form-label" for="userNickname"><span>*昵称</span></label>
+                      <input class="form-control" th:value="${user!=null ? user.userNickname:''}" id="userNickname" name="userNickname" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label" for="userQq"><span>*qq</span></label>
+                      <input class="form-control" th:value="${user!=null ? user.userQq:''}" id="userQq" name="userQq" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label" for="userWechat"><span>*Wechat</span></label>
+                      <input class="form-control" th:value="${user!=null ? user.userWechat:''}" id="userWechat" name="userWechat" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label" for="userUrl"><span>*头像</span></label>
+                      <input type="text" class="form-control" th:value="${user!=null ? user.userUrl:''}" id="userUrl" name="userUrl" readonly="readonly">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default " type="button" th:onclick="'javascript:openChoice(\''+userUrl+'\')'">选择</button>
+                      </span>
+                    </div>
+                    <div class="tile-footer">
+                        <div>
+                          <button class="btn btn-sm btn-outline-primary" type="button" onclick="update()"><span>修改</span></button>
+                        </div>
+
+                    </div>
+                  </form>
+                </ul>
+              </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div style="height: 200px;"></div>
+
+</section>
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+
+<script>
+
+  function openChoice(id) {
+    layer.open({
+      type : 2,
+      title : '所有图片',
+      anim : 2,
+      area : [ '90%', '90%' ],
+      shadeClose : true,
+      maxmin : true,
+      content : "/enclosure/openChoice/" + id
+    });
+  }
+  function update() {
+    var obj = $('#dataFrom').serialize();
+    $.ajax({
+      type : "POST",
+      url : "/person/interceptor/updateUser",
+      data : obj,
+      dataType : "json",
+      success : function(data) {
+        if (data.flag == true) {
+          $.toast({
+            text : data.msg,
+            heading : '提示',
+            icon : 'success',
+            showHideTransition : 'fade',
+            allowToastClose : true,
+            hideAfter : 1000,
+            stack : 1,
+            position : 'top-center',
+            textAlign : 'left',
+            loader : true,
+            loaderBg : '#ffffff',
+            afterHidden : function() {
+              window.location.href='/person/interceptor';
+            }
+          });
+        } else {
+          showMsg(data.msg, "error", 3000);
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>

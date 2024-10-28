@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+
+<link rel="stylesheet" type="text/css" th:href="@{/plugins/toast/jquery.toast.css}">
+
+<div th:replace="module/macros :: header(5)"></div>
+
+<section class="container container-page">
+
+    <div th:replace="admin/admin_module/admin_macros :: push(4)"></div>
+
+    <div class="tile">
+        <input type="hidden" id="articleId">
+        <a thref="#"><span style="color:#5bc0de">举报</span></a>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" id="article_table">
+                <tr>
+                    <td>
+                        <div class="tile">
+                            <header class="article-header">
+                                <h1 class="article-title">举报</h1>
+                            </header>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <tr>
+                                        <td>举报者</td>
+                                        <td>原因</td>
+                                        <td>时间</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    <tr th:each="report : ${info.list}">
+                                        <td th:text="${report.reportUser}" class="mt-auto"></td>
+                                        <td th:text="${report.reportContent}" class="mt-auto"></td>
+                                        <td th:text="${#dates.format(report.reportCreatetime,'yyyy/MM/dd HH:mm:ss')}"></td>
+                                        <td>
+                                            <a th:href="@{/details(id=${report.reportFromId},status=${report.reportFrom})}" class="btn-success button btn-sm ">查看</a>
+                                            <a th:href="@{/admin/report/deleteReport(id=${report.reportFromId},status=${report.reportFrom},reportId=${report.reportId})}" class="btn-danger button btn-sm ">处理</a>
+                                            <a th:href="@{/admin/report/deleteReport2(id=${report.reportId})}" class="btn-danger button btn-sm ">打回</a>
+                                        </td>
+                                    </tr>
+                                    <tr th:unless="${info.list.total} != 0">
+                                        <td th:attr="colspan='4',align='center'">暂无举报</td>
+                                    </tr>
+                                </table>
+                                <div th:replace="module/macros :: pagePost(${info})"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div th:replace="module/macros :: footer_js"></div>
+<div th:replace="module/macros :: photo_js"></div>
+
+
+
+
+<script type="text/javascript" th:src="@{/js/mayday.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/toast/jquery.toast.js}"></script>
+
+<script>
+
+
+    function remove(sponsorId) {
+        var r=confirm("确定打回吗!");
+        if (r==true){
+            window.location.href = "/admin/sponsor/repulse?sponsorId="+sponsorId;
+        }
+    }
+    function adopt(sponsorId) {
+        var r=confirm("确定通过吗!");
+        if (r==true){
+            window.location.href = "/admin/sponsor/adopt?sponsorId="+sponsorId;
+        }
+    }
+    function look(sponsorId) {
+        window.location.href = "/admin/sponsor/look?sponsorId="+sponsorId;
+    }
+
+
+</script>
+</body>
+</html>

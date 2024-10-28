@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="module/macros :: head"></div>
+
+<body class="user-select">
+<script>
+
+
+</script>
+<div th:replace="module/macros :: header(0)"></div>
+
+
+<section class="container">
+  <div class="content-wrap">
+    <div class="content">
+      <header class="article-header">
+        <h1 class="article-title"><a href="program" th:text="${info.getIndexTitle()}"></a></h1>
+        <div class="article-meta">
+          <span class="item article-meta-time">
+           <time class="time" data-toggle="tooltip" data-placement="bottom">
+            <i class="glyphicon glyphicon-time"></i>
+            <span th:text="${#dates.format(info.getIndexCreateTime(),'yyyy/MM/dd HH:mm:ss')}"></span>
+           </time>
+          </span>
+          <span class="item article-meta-source" data-toggle="tooltip" data-placement="bottom">
+            <i class="glyphicon glyphicon-globe"></i>
+            共<span th:text="${count}"></span>条评论
+          </span>
+          <span class="item article-meta-category" data-toggle="tooltip" data-placement="bottom">
+            <i class="glyphicon glyphicon-list"></i>
+            <a href="" th:text="${info.getIndexFrom()}"></a>
+          </span>
+          <span class="item article-meta-views" data-toggle="tooltip" data-placement="bottom">
+            <i class="glyphicon glyphicon-eye-open"></i>
+            共<span th:text="${info.getIndexCount()}"></span>人围观
+          </span>
+        </div>
+      </header>
+      <article class="article-content">
+        <p><img th:data-original="${info.getIndexUrl()}" th:src="${info.getIndexUrl()}" alt="" /></p>
+        <p th:text="${info.getIndexContent()}"></p>
+        <p class="article-copyright hidden-xs">未经允许不得转载</p>
+      </article>
+
+      <div class="relates">
+        <div class="title">
+          <h3>推荐</h3>&nbsp;&nbsp;
+          <small><a data-toggle="modal" data-target="#loginModal" class="login" rel="nofollow">举报</a></small>
+        </div>
+        <ul>
+          <div th:each="recommend : ${recommends}">
+            <li><a th:href="@{/details(id=${recommend.getIndexId()},status=${recommend.getIndexFrom()})}" th:text="${recommend.getIndexTitle()}"></a></li>
+          </div>
+        </ul>
+      </div>
+
+      <div class="title" id="comment">
+        <h3>评论</h3>
+      </div>
+
+
+      <div id="respond">
+        <form action="/details/interceptor/addComment" method="post">
+          <div class="comment">
+            <div class="comment-title"><img class="avatar" th:src="${url}" alt="" /></div>
+            <div class="comment-box">
+              <textarea placeholder="您的评论可以一针见血" name="comment" id="comment" cols="80%" rows="3" tabindex="1" ></textarea>
+              <div class="comment-ctrl">
+                <button type="submit">评论</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <div id="postcomments">
+        <ol class="commentlist">
+          <div th:each="comment : ${comments}">
+
+            <li class="comment-content">
+              <div class="comment-avatar"><img class="avatar" th:src="${comment.getUserUrl()}" alt="" /></div>
+              <div class="comment-main">
+                <p>
+                  <span class="address" th:text="${comment.getUserName()}"></span>
+                  <span class="time">(<span th:text="${#dates.format(comment.getCommentCreatetime(),'yyyy/MM/dd HH:mm:ss')}"></span>)</span><br />
+                  <span th:text="${comment.getCommentContent()}"></span>
+                </p>
+              </div>
+
+            </li>
+          </div>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+
+  <aside class="sidebar">
+    <div class="fixed">
+      <div class="widget widget-tabs">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab">公告</a></li>
+          <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">联系站长</a></li>
+        </ul>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane notice active" id="notice">
+            <ul th:each="notice : ${notices}">
+              <li>
+                <time th:text="${#dates.format(notice.noticeCreatetime,'yyyy/MM/dd')}"></time>
+                <a href="" target="_blank" th:text="${notice.noticeContent}"></a>
+              </li>
+            </ul>
+          </div>
+          <div role="tabpanel" class="tab-pane contact" id="contact">
+            <h2>Email:<br />
+              <a href="https://mail.qq.com" data-toggle="tooltip" data-placement="bottom" title="2848351894@qq.com">2848351894@qq.com</a></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="module/macros :: sidebar"></div>
+    <div th:replace="module/macros :: hot_article"></div>
+  </aside>
+</section>
+
+
+<div th:replace="module/macros :: footer"></div>
+
+
+<div class="modal fade user-select" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="/details/interceptor/report" method="post">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="loginModalLabel">举报</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="reason">原因</label>
+            <input type="text" class="form-control" id="reason" name="reason" placeholder="请输入原因" autofocus maxlength="15" autocomplete="off" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div th:replace="module/macros :: footer_js"></div>
+
+
+
+</body>
+</html>
